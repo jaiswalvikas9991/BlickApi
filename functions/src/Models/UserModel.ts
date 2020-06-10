@@ -7,24 +7,32 @@ import PhoneNumberModel from '../Models/PhoneNumberModel';
 */
 export default class UserModel {
     public flatNo: number;
-    public cars: CarModel[];
-    public guests: GuestModel[];
-    public phoneNumbers: PhoneNumberModel[];
+    public email: string;
+    public password?: string;
+    public cars?: CarModel[];
+    public guests?: GuestModel[];
+    public phoneNumbers?: PhoneNumberModel[];
 
-    constructor(flatNo: number, cars?: CarModel[], guests?: GuestModel[], phoneNumbers?: PhoneNumberModel[]) {
+    constructor(flatNo: number, email: string, password?: string, cars?: CarModel[], guests?: GuestModel[], phoneNumbers?: PhoneNumberModel[]) {
         this.flatNo = flatNo;
-        this.cars = cars??[];
-        this.guests = guests??[];
-        this.phoneNumbers = phoneNumbers??[];
+        this.email = email;
+        this.password = password;
+        this.cars = cars;
+        this.guests = guests;
+        this.phoneNumbers = phoneNumbers;
     }
 
     // static public fromMap = () : UserModel => {};
 
     public toMap(): {} {
-        return ({
-            cars: this.cars.map((car: CarModel) => car.toMap()),
-            guests: this.guests.map((guest: GuestModel) => guest.toMap()),
-            phoneNumbers: this.phoneNumbers.map((phoneNumber: PhoneNumberModel) => phoneNumber.toMap())
-        });
+        return (JSON.parse(JSON.stringify({
+            flatNo: this.flatNo,
+            email: this.email,
+            password: this.password,
+            cars: this.cars === undefined ? undefined : this.cars.map((car: CarModel) => car.toMap()),
+            guests: this.guests === undefined ? undefined : this.guests.map((guest: GuestModel) => guest.toMap()),
+            phoneNumbers: this.phoneNumbers === undefined ? undefined : this.phoneNumbers.map((phoneNumber: PhoneNumberModel) => phoneNumber.toMap())
+        }
+        )));
     }
 }

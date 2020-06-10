@@ -5,7 +5,7 @@ interface Database {
     userLogin : (email : string, password : string) => Promise<any>;
     userSignUp : (email : string, password : string) => Promise<any>;
     checkIfEmailExists : (email : string) => Promise<boolean>;
-    createNewUser : (uid : string) => Promise<boolean>;
+    createNewUserDoc : (uid : string) => Promise<boolean>;
 }
 
 //You Can manage auth users using the admin api

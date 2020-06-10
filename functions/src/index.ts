@@ -29,7 +29,7 @@ app.use(express.json());
 app.use('/user', UsersController);
 app.use('/auth', AuthController);
 app.use('/', (req, res) => {
-    res.status(200).json({data : "root rouszcxcsdfdsafdsfdsffte"}).end();
+    res.status(200).json({data : "Not Found"}).end();
 });
 
 export const api = functions.https.onRequest(app);

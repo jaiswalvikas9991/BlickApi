@@ -14,8 +14,11 @@ export default abstract class AuthService {
             return res.status(424).json({ success: false, errors: allErrors }).end();
         }
         try {
-            const cred: {} = await Database.Instance.userSignUp(req.body.email, req.body.password);
-            console.log(cred);
+            const cred = await Database.Instance.userSignUp(req.body.email, req.body.password);
+            //console.log(cred);
+            const userObject = JSON.parse(JSON.stringify(cred));
+            console.log(JSON.stringify(userObject));
+            await Database.Instance.createNewUserDoc(userObject.user.uid);
             return res.status(200).json({ success: true }).end();
         }
         catch (error) {

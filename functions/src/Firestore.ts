@@ -47,7 +47,6 @@ export default class Firestore implements Database {
     public userSignUp = async (email: string, password: string): Promise<any> => {
         try {
             const cred: {} = await fire.auth().createUserWithEmailAndPassword(email, password);
-            //await this.createNewUser(cred.);
             return (cred);
         }
         catch (error) {
@@ -65,9 +64,9 @@ export default class Firestore implements Database {
         }
     };
 
-    public createNewUser = async (uid : string) : Promise<boolean> => {
+    public createNewUserDoc = async (uid : string) : Promise<boolean> => {
         try{
-            this.db.collection('users').doc(uid);
+            this.db.collection('users').doc(uid).set({});
             return(true);
         }
         catch(error) {
