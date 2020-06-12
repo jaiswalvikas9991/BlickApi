@@ -9,6 +9,15 @@ import * as cors from 'cors';
 /*
     @author VikasJaiswal
 */
+// This is used to add custom values to the req object
+declare global {
+    namespace Express {
+        interface Request {
+            auth_status: string
+        }
+    }
+}
+
 const app = express();
 app.use(bodyParser.json())
 app.use(cors({ origin: true }));
@@ -28,8 +37,8 @@ app.use(express.json());
 
 app.use('/user', UsersController);
 app.use('/auth', AuthController);
-app.use('/', (req, res) => {
-    res.status(200).json({data : "Not Found"}).end();
+app.use('/', (_, res) => {
+    res.status(404).json({ data: "Route Not Found", status: 404 }).end();
 });
 
 export const api = functions.https.onRequest(app);

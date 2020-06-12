@@ -11,19 +11,21 @@ export default abstract class AuthService {
         //* This is where we handel the validation error
         if (!errors.isEmpty()) {
             const allErrors: any[] = errors.array().map((err) => err.msg);
-            return res.status(424).json({ success: false, errors: allErrors }).end();
+            return res.status(406).json({ status: 406, errors: allErrors }).end();
         }
         try {
             const cred = await Database.Instance.userSignUp(req.body.email, req.body.password);
-            //console.log(cred);
             const userObject = JSON.parse(JSON.stringify(cred));
-            console.log(JSON.stringify(userObject));
-            await Database.Instance.createNewUserDoc(userObject.user.uid);
-            return res.status(200).json({ success: true }).end();
+            // Adding the email to the building data
+            await Database.Instance.addUserToFlat(req.body.building_id, req.body.flat_no, req.body.email);
+            //console.log(JSON.stringify(userObject));
+            await Database.Instance.createNewUserDoc(userObject.user.uid, req.body.email);
+            const signedUid = jwt.sign(userObject.user.uid, tokenKey);
+            return res.status(200).json({ status: 200, data: [{ token: signedUid }] }).end();
         }
         catch (error) {
             console.log(error);
-            return res.status(424).json({ success: false, error: 'Database Error' }).end();
+            return res.status(500).json({ status: 500, errors: ['Server Error'] }).end();
         }
     };
     public static userLogin = async (req: express.Request, res: express.Response) => {
@@ -31,18 +33,18 @@ export default abstract class AuthService {
         //* This is where we handel the validation error
         if (!errors.isEmpty()) {
             const allErrors: any[] = errors.array().map((err) => err.msg);
-            return res.status(424).json({ success: false, errors: allErrors }).end();
+            return res.status(406).json({ status: 406, errors: allErrors }).end();
         }
         try {
-            const token = await Database.Instance.userLogin(req.body.email, req.body.password);
-            const userObject = JSON.parse(JSON.stringify(token));
+            const cred = await Database.Instance.userLogin(req.body.email, req.body.password);
+            const userObject = JSON.parse(JSON.stringify(cred));
             const signedUid = jwt.sign(userObject.user.uid, tokenKey);
-            console.log("This si the" + signedUid);
-            return res.status(200).json({ done: true, token: signedUid }).end();
+            //console.log("This si the" + signedUid);
+            return res.status(200).json({ status: 200, data: [{ token: signedUid }] }).end();
         }
         catch (error) {
             console.log(error);
-            return res.status(424).json({ success: false, error: [error] }).end();
+            return res.status(406).json({ status: 406, errors: [error] }).end();
         }
     };
 }
