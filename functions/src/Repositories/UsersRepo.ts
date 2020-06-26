@@ -9,15 +9,15 @@ export default abstract class UsersRepo {
         //* Converting the raw data to the UserModel
         const users: UserModel[] = new Array<UserModel>();
         data.forEach((user: {}) => {
-            users.push(new UserModel(404));
+            users.push(new UserModel(404, ""));
         });
         return (users);
     };
 
-    public static getOneUserByEmail = async (email: string): Promise<UserModel> => {
-        const data: {} = await Database.Instance.getOneUserByEmail(email);
+    public static getUserDataByUid = async (uid: string): Promise<UserModel> => {
+        const data: {} = await Database.Instance.getUserDataByUid(uid);
         console.log(data);
-        const user: UserModel = new UserModel(404);
+        const user: UserModel = new UserModel(404, "");
         return (user);
     };
 

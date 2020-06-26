@@ -1,5 +1,5 @@
 interface Database {
-    getOneUserByEmail: (email: string, filter?: {}) => Promise<{}>;
+    getUserDataByUid: (uid: string, filter?: {}) => Promise<{}>;
     getUserByFlatNumber: (flatN0: number, filter?: {}) => Promise<{}>;
     getAllUsersByBuilding: (buildingId: string, filter?: {}) => Promise<Array<{}>>;
     userLogin: (email: string, password: string) => Promise<any>;

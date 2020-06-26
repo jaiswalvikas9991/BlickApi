@@ -4,7 +4,6 @@ import * as bodyParser from 'body-parser';
 import UsersController from './Controllers/UsersController';
 import AuthController from './Controllers/AuthController';
 import * as cors from 'cors';
-// import * as admin from 'firebase-admin';
 
 /*
     @author VikasJaiswal
@@ -14,6 +13,8 @@ declare global {
     namespace Express {
         interface Request {
             auth_status: string
+            uid : string,
+            level : string
         }
     }
 }

@@ -20,8 +20,8 @@ export default abstract class UsersService {
         return (res.json({ data: users.map((user: UserModel) => user.toMap()) }));
     };
 
-    public static getOneUserByEmail = async (req: express.Request, res: express.Response) => {
-        const user: UserModel = await UserRepo.getOneUserByEmail(req.body.email);
+    public static getUserDataByUid = async (req: express.Request, res: express.Response) => {
+        const user: UserModel = await UserRepo.getUserDataByUid(req.uid);
         return (res.json({ data: user.toMap() }));
     };
 
