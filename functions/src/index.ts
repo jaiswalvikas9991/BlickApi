@@ -1,20 +1,30 @@
 import * as functions from 'firebase-functions';
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import UsersController from './Controllers/UsersController';
+//import UsersController from './Controllers/UsersController';
 import AuthController from './Controllers/AuthController';
 import * as cors from 'cors';
+import * as graphqlHTTP from 'express-graphql';
+import Schema from './Graphql/Schema';
+import Resolvers from './Graphql/Resolvers';
+import BaseResponse from './BaseResponse';
+import { checkAuthToken } from './utils/Constants';
 
 /*
-    @author VikasJaiswal
+    @author Vikas Jaiswal
 */
+
 // This is used to add custom values to the req object
 declare global {
     namespace Express {
         interface Request {
-            auth_status: string
-            uid : string,
-            level : string
+            auth: {
+                auth_status: boolean,
+                error_message: string,
+                status: number,
+                uid: string,
+                level: string
+            }
         }
     }
 }
@@ -35,9 +45,19 @@ app.use(express.json());
 //         res.status(401).send(err);
 //     }
 // });
-
-app.use('/user', UsersController);
 app.use('/auth', AuthController);
+//app.use('/user', UsersController);
+
+app.use(checkAuthToken);
+app.use('/graphql', graphqlHTTP({
+    schema: Schema,
+    rootValue: Resolvers,
+    customFormatErrorFn: (error) => {
+        if (!error.originalError) return (error);
+        return (new BaseResponse(10, undefined, [error.message]));
+    }
+}));
+
 app.use('/', (_, res) => {
     res.status(404).json({ data: "Route Not Found", status: 404 }).end();
 });

@@ -28,6 +28,7 @@ export default abstract class Firestore implements Database {
 
     public async getUserDataByUid(uid: string): Promise<{}>{
         const userDocRef = await this.db.collection('users').doc(uid).get();
+        if(!userDocRef.exists) throw Error('User Data Does not Exist');
         const userData = userDocRef.data();
         if (userData === undefined) throw Error('Server Error');
         return (userData);

@@ -1,7 +1,7 @@
 import * as express from 'express';
 import UserRepo from '../Repositories/UsersRepo';
 import UserModel from '../Models/UserModel';
-import { validationResult, Result, ValidationError} from 'express-validator';
+import { validationResult, Result, ValidationError } from 'express-validator';
 
 /*
     @author VikasJaiswal
@@ -10,19 +10,26 @@ export default abstract class UsersService {
 
     private constructor() { }
 
-    public static getAllUsersByBuilding = async (req: express.Request, res: express.Response) => {
-        const errors: Result<ValidationError> = validationResult(req);
-        if (!errors.isEmpty()) {
-            const error: Error = new Error('Validaion Failed');
-            throw (error);
-        }
-        const users: UserModel[] = await UserRepo.getAllUsersByBuilding(req.body.building_id);
-        return (res.json({ data: users.map((user: UserModel) => user.toMap()) }));
+    public static async getUserDataByUid(_ : any, req : Express.Request) {
+        //console.log(req.auth.uid);
+        const data: {} = await UserRepo.Instance.getUserDataByUid(req.auth.uid);
+        //console.table(data);
+        return(data);
     };
 
-    public static getUserDataByUid = async (req: express.Request, res: express.Response) => {
-        const user: UserModel = await UserRepo.getUserDataByUid(req.uid);
-        return (res.json({ data: user.toMap() }));
+    // public static async getUserDataByUid(req: express.Request, res: express.Response) {
+    //     const user: UserModel = await UserRepo.Instance.getUserDataByUid(req.uid);
+    //     return (res.json({ data: user.toMap() }));
+    // };
+
+    public static async getAllUsersByBuilding(req: express.Request, res: express.Response) {
+        const errors: Result<ValidationError> = validationResult(req);
+        if (!errors.isEmpty()) {
+            const error: Error = new Error('Validation Failed');
+            throw (error);
+        }
+        const users: UserModel[] = await UserRepo.Instance.getAllUsersByBuilding(req.body.building_id);
+        return (res.json({ data: users.map((user: UserModel) => user.toMap) }));
     };
 
     // public setUser = async (data: User) => {
