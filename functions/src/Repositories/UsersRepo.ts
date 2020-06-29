@@ -11,25 +11,31 @@ export default class UsersRepo extends Firestore {
         return (this._instance);
     }
 
-    public getUserDataByUid = async (uid: string): Promise<{}> => {
+    public async getUserDataByUid (uid: string): Promise<{}>{
         const data: {} = await super.getUserDataByUid(uid);
         //console.log(data);
         //const user: UserModel = new UserModel(0, "");
         return (data);
-    };
+    }
+
+    public async getBuildingInfoById(id : string) {
+        const data : {} = await super.getBuildingInfoById(id);
+        return(data);
+    }
+
+    public async getUsersInfoByFlat(buildingId : string, flatId : string) {
+        const data : {} = await super.getUsersInfoByFlat(buildingId, flatId);
+        return(data);
+    }
 
 
-    public getAllUsersByBuilding = async (buildingId: string): Promise<UserModel[]> => {
+    public async getAllUsersByBuilding(buildingId: string): Promise<UserModel[]>{
         const data: Array<{}> = await super.getAllUsersByBuilding(buildingId);
         //* Converting the raw data to the UserModel
         const users: UserModel[] = new Array<UserModel>();
         data.forEach((user: {}) => {
-            users.push(new UserModel(404, ""));
+            users.push(new UserModel("404", ""));
         });
         return (users);
-    };
-
-    // public static setUser = async (user: User) => {
-    //     // TODO : Implement the making of a new user
-    // };
+    }
 }

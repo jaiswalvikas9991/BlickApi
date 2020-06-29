@@ -7,20 +7,25 @@ import { validationResult, Result, ValidationError } from 'express-validator';
     @author VikasJaiswal
 */
 export default abstract class UsersService {
-
     private constructor() { }
 
-    public static async getUserDataByUid(_ : any, req : Express.Request) {
+    public static async getUserDataByUid(_: any, req: express.Request) {
         //console.log(req.auth.uid);
         const data: {} = await UserRepo.Instance.getUserDataByUid(req.auth.uid);
         //console.table(data);
-        return(data);
+        return (data);
     };
 
-    // public static async getUserDataByUid(req: express.Request, res: express.Response) {
-    //     const user: UserModel = await UserRepo.Instance.getUserDataByUid(req.uid);
-    //     return (res.json({ data: user.toMap() }));
-    // };
+    public static async getBuildingInfoById(_: any, req: express.Request) {
+        const data: {} = await UserRepo.Instance.getBuildingInfoById(req.auth.building_id);
+        return (data);
+    }
+
+    public static async getUsersInfoByFlat(_: any, req: express.Request) {
+        const data: {} = await UserRepo.Instance.getUsersInfoByFlat(req.auth.building_id, req.auth.flat_id);
+        return (data);
+    }
+
 
     public static async getAllUsersByBuilding(req: express.Request, res: express.Response) {
         const errors: Result<ValidationError> = validationResult(req);
@@ -31,27 +36,4 @@ export default abstract class UsersService {
         const users: UserModel[] = await UserRepo.Instance.getAllUsersByBuilding(req.body.building_id);
         return (res.json({ data: users.map((user: UserModel) => user.toMap) }));
     };
-
-    // public setUser = async (data: User) => {
-    //     await UserRepo.setUser(data);
-    // };
-
-    // public checkUser = async (carNumber: string): Promise<{ data: boolean }> => {
-    //     const data: User[] = await UserRepo.getAllUsers();
-    //     let allow: boolean = false;
-    //     data.forEach((user: User) => {
-    //         user.carNumbers.forEach((car: CarNumber) => {
-    //             if (car.carNumber === carNumber) {
-    //                 allow = true;
-    //             }
-    //         });
-
-    //         user.guests.forEach((car: Guest) => {
-    //             if (car.carNumber === carNumber) {
-    //                 allow = true;
-    //             }
-    //         });
-    //     });
-    //     return ({ data: allow });
-    // };
 }

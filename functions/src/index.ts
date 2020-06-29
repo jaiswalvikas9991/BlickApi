@@ -23,7 +23,9 @@ declare global {
                 error_message: string,
                 status: number,
                 uid: string,
-                level: string
+                level: string,
+                building_id : string,
+                flat_id : string
             }
         }
     }

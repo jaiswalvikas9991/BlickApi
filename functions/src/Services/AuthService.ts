@@ -17,16 +17,14 @@ export default abstract class AuthService {
         }
         try {
             const user: UserAuthModel = new UserAuthModel(req.body.email, req.body.password, req.body.building_id, req.body.flat_id);
+            if (user.buildingId === undefined || user.flatId === undefined) throw new Error('Got Empty Fields');
             const cred = await AuthRepo.Instance.userSignUp(user.email, user.password);
             const userObject = JSON.parse(JSON.stringify(cred));
-            // Adding the email to the building data
-            if (user.buildingId === undefined || user.flatId === undefined) throw new Error('Got Empty Field');
+            await AuthRepo.Instance.addUserToAuthData(userObject.user.uid, user.buildingId, user.flatId);
             await AuthRepo.Instance.addUserToFlat(user.buildingId, user.flatId, user.email);
-            //console.log(JSON.stringify(userObject));
-            await AuthRepo.Instance.createNewUserDoc(userObject.user.uid, req.body.email);
-            const signedUid = jwt.sign({ uid: userObject.user.uid, level: "user" }, tokenKey);
-            // return res.status(200).json({ status: 200, data: [{ token: signedUid, user_name: req.body.email }] }).end();
-            return res.status(200).json(new BaseResponse(200, [{ token: signedUid, user_name: user.email }], undefined).toMap).end();
+            await AuthRepo.Instance.createNewUserDoc(userObject.user.uid, user.email, user.buildingId, user.flatId);
+            const signedData = jwt.sign({ uid: userObject.user.uid, level: "user", building_id: user.buildingId, flat_id: user.flatId }, tokenKey);
+            return res.status(200).json(new BaseResponse(200, [{ token: signedData, user_name: user.email, building_id: user.buildingId, flat_id: user.flatId}], undefined).toMap).end();
         }
         catch (error) {
             console.log(error);
@@ -42,12 +40,10 @@ export default abstract class AuthService {
         }
         try {
             const user: UserAuthModel = new UserAuthModel(req.body.email, req.body.password);
-            const cred = await AuthRepo.Instance.userLogin(user.email, user.password);
-            const userObject = JSON.parse(JSON.stringify(cred));
-            const signedUid = jwt.sign({ uid: userObject.user.uid, level: "user" }, tokenKey);
-            //console.log("This si the" + signedUid);
-            // return res.status(200).json({ status: 200, data: [{ token: signedUid, user_name: req.body.email }] }).end();
-            return res.status(200).json(new BaseResponse(200, [{ token: signedUid, user_name: user.email }], undefined).toMap).end();
+            const cred: any = await AuthRepo.Instance.userLogin(user.email, user.password);
+            const authData: any = await AuthRepo.Instance.getAuthDataByUid(cred.user.uid);
+            const signedData = jwt.sign({ uid: cred.user.uid, level: "user", building_id: authData.building_id, flat_id: authData.flat_id }, tokenKey);
+            return res.status(200).json(new BaseResponse(200, [{ token: signedData, user_name: user.email, building_id: authData.building_id, flat_id: authData.flat_id }], undefined).toMap).end();
         }
         catch (error) {
             console.log(error);

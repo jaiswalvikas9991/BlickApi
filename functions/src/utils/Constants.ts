@@ -9,7 +9,9 @@ export const checkAuthToken = (req: express.Request, _: express.Response, next: 
         error_message: "",
         status: 401,
         uid: "",
-        level: ""
+        level: "",
+        building_id : "",
+        flat_id : ""
     }
     if (authHeader === undefined) {
         req.auth.status = 401;
@@ -23,6 +25,8 @@ export const checkAuthToken = (req: express.Request, _: express.Response, next: 
         req.auth.auth_status = true;
         req.auth.uid = decoded.uid;
         req.auth.level = decoded.level;
+        req.auth.building_id = decoded.building_id;
+        req.auth.flat_id = decoded.flat_id;
         return (next());
     }
     catch (error) {
@@ -32,3 +36,18 @@ export const checkAuthToken = (req: express.Request, _: express.Response, next: 
         return (next());
     }
 }
+
+// app.use('/', (req, res, next) => {
+//     const authHeader = req.get('Authorization');
+//     if (authHeader === undefined) return res.status(401).send(new BaseResponse(401, undefined, ['Auth header not found']).toMap).end();
+//     const token = authHeader.split(authSeparator)[1];
+//     try {
+//         var decoded: any = verify(token, tokenKey);
+//         req.uid = decoded.uid;
+//         req.level = decoded.level;
+//         next();
+//     }
+//     catch (error) {
+//         return res.status(401).send(new BaseResponse(401, undefined, ['Unauthorized User']).toMap).end();
+//     }
+// });

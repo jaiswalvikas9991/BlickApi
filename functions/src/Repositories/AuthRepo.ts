@@ -9,39 +9,33 @@ export default class AuthRepo extends Firestore {
         return (this._instance);
     }
 
-    public async userLogin(email: string, password: string): Promise<{}> {
-        try {
-            const token: {} = await super.userLogin(email, password);
-            return (token);
-        }
-        catch (error) {
-            return (Promise.reject(error.message));
-        }
-    };
+    public async userLogin(email: string, password: string): Promise<{uid : string}> {
+        const cred = await super.userLogin(email, password);
+        return (JSON.parse(JSON.stringify(cred)));
+    }
 
     public async userSignUp(email: string, password: string): Promise<any> {
-        console.table({ email: email, password: password });
-        try {
-            const cred: {} = await super.userSignUp(email, password);
-            return (cred);
-        }
-        catch (error) {
-            console.table({ log: 'Inside AuthRepo error' });
-            return Promise.reject('hello world');
-        }
-    };
+        const cred: {} = await super.userSignUp(email, password);
+        return (JSON.parse(JSON.stringify(cred)));
+    }
 
     public async checkIfEmailExists(email: string): Promise<boolean> {
-        return(super.checkIfEmailExists(email));
-    };
+        return (super.checkIfEmailExists(email));
+    }
 
     public async checkUserByBuildingId(buildingId: string, email: string, flatNo: string): Promise<boolean> {
-        try {
-            const ifExists: boolean = await super.checkUserByBuildingId(buildingId, email, flatNo);
-            return (ifExists);
-        }
-        catch (error) {
-            return Promise.reject(new Error(error.message));
-        }
-    };
+        const ifExists: boolean = await super.checkUserByBuildingId(buildingId, email, flatNo);
+        return (ifExists);
+    }
+    public async addUserToAuthData(uid: string, buildingId: string, flatId: string): Promise<void> {
+        await super.addUserToAuthData(uid, buildingId, flatId);
+    }
+
+    public async createNewUserDoc(uid: string, email: string, buildingId: string, flatId: string): Promise<boolean> {
+        return await super.createNewUserDoc(uid, email, buildingId, flatId);
+    }
+
+    public async getAuthDataByUid(uid: string): Promise<{}> {
+        return await super.getAuthDataByUid(uid);
+    }
 }
