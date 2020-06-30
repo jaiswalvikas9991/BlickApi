@@ -13,6 +13,7 @@ const Schema = buildSchema(`
     type Guest {
         car_number : String!
         created_on : String
+        end_time : String
     }
 
     type PhoneNumber {

@@ -146,4 +146,29 @@ export default abstract class Firestore implements Database {
             throw new Error('Server Error');
         }
     }
+
+    public async checkIfGuestsExists(uid: string, carNumber: string): Promise<boolean> {
+        const docRef = await this.db.collection('users').doc(uid).get();
+        if (!docRef.exists) throw new Error('User Does Not Exists');
+        const data = docRef.data();
+        if (data === undefined) throw new Error('Server Error');
+        const guests: { car_number: string }[] = data.guests;
+        if (guests === undefined) return (false);
+        for (let i: number = 0; i < guests.length; i++) if (guests[i].car_number === carNumber) return (true);
+        return (false);
+    }
+
+    public async addGuestByUser(uid: string, carNumber: string): Promise<boolean> {
+        try {
+            const ifGuestsExists = await this.checkIfGuestsExists(uid, carNumber);
+            if (ifGuestsExists) throw new Error('Guests Already Exists');
+            await this.db.collection('users').doc(uid).update({
+                guests: admin.firestore.FieldValue.arrayUnion({ car_number: carNumber, created_on: new Date().toISOString(), end_time: new Date(new Date().getDay() + 1).toISOString() })
+            });
+            return (true);
+        }
+        catch (error) {
+            throw new Error(error.message);
+        }
+    }
 }
